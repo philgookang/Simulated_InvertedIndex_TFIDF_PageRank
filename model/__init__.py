@@ -1,0 +1,1 @@
+from model.WikiM import WikiM
