@@ -36,13 +36,13 @@ class Database:
         config = self.get_config()
 
         # connection to database
-        self.mysqlConnection = pymysql.connector.connect(user=config["user"], password=config["password"], host=config["host"], port=config["port"], database="ADB2018_22788", charset="utf8mb4")
+        self.mysqlConnection = pymysql.connect(user=config["user"], password=config["password"], host=config["host"], port=config["port"], database="ADB2018_22788", charset="utf8mb4")
 
         # makes life easy
         self.mysqlConnection.autocommit = True
 
         # create cusor
-        self.mysqlCursor = self.mysqlConnection.cursor(dictionary=True, buffered=True)
+        self.mysqlCursor = self.mysqlConnection.cursor()
 
         # set names
         self.mysqlCursor.execute("SET NAMES utf8mb4 ")
@@ -102,38 +102,20 @@ class Database:
         # check if connection time has been too long
         self.check_connection_time()
 
-        # save start time
-        start_time = time.time()
-
         try:
 
             # execute sql
             self.mysqlCursor.execute(sql, tuple(params))
 
-        except  mysql.connector.Error as err:
-            # check type of error is server has gone away
-            if 'MySQL server has gone away' in str(err):
-                # reconnect MySQL
-                self.connect()
-            else:
-                print("[MYSQL ERROR] ", err)
-                pass
+        except pymysql.err.ProgrammingError as error:
+            code, message = error.args
+            print("[MYSQL SQL] ", code, message)
+        except pymysql.InternalError as error:
+            code, message = error.args
+            print("[MYSQL ERROR] ", code, message)
 
         if show_sql:
             print(self.mysqlCursor.statement)
-
-        # get total time taken
-        result_time = (time.time() - start_time)
-
-        # check if time take is larger than 5 miliseconds
-        '''
-        if result_time >= 0.05:
-
-            # save query to file
-            with open("log/slowquery.log", "a") as fp:
-                str_time = "{:.3f}".format(result_time)
-                fp.write(str_time + " py explain " + self.mysqlCursor.statement + "\n")
-        '''
 
         # apply transaction to database
         self.mysqlConnection.commit()
