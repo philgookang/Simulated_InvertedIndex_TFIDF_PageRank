@@ -51,10 +51,12 @@ class PageRank:
 
             summation_probability = 0.0
 
-            for other_id,other_wiki in enumerate(wiki_list):
+            linked_wiki_list = LinkM({ "id_to" : current_wiki['id'] }).getList(nolimit = True, select = " id_from ")
+
+            for other_id,other_wiki in enumerate(linked_wiki_list):
 
                 # get leaving list
-                link_list   = LinkM({ "id_from" : other_wiki["id"] }).getList(nolimit = True, select = " id_to ")
+                link_list   = LinkM({ "id_from" : other_wiki["id_from"] }).getList(nolimit = True, select = " id_to ")
                 link_count  = len(link_list)
 
                 # if has no links skip!
@@ -65,11 +67,10 @@ class PageRank:
                 link_target_counter = collections.Counter(link_target_list)
 
                 # calculate current probabilities
-                if other_wiki["id"] in self.page_probabilities:
-                    probability = self.page_probabilities[ other_wiki["id"] ]
+                if attempt != 0 and other_wiki["id_from"] in self.page_probabilities:
+                    probability = self.page_probabilities[ other_wiki["id_from"] ]
                 else:
                     probability = (1 / N)
-
 
                 # number of links going to currrent wiki / total number of links
                 link_probability = link_target_counter[current_wiki['id']] / link_count
@@ -87,7 +88,8 @@ class PageRank:
         self.saveProbability()
 
         if not self.checkAllConverge():
-            self.calculate( (attempt + 1) )
+            if attempt <= 10: # <------------------------------------ EARSE THIS AFTER TESTING IS COMPLETE
+                self.calculate( (attempt + 1) )
 
 
     def saveProbability(self):
