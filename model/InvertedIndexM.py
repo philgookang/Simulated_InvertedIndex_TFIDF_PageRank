@@ -28,4 +28,4 @@ class InvertedIndexM:
             GROUP BY
                 `id`
         '''
-        return self.postman.getList(query, [self.term])
+        return self.postman.get(query, [self.term])

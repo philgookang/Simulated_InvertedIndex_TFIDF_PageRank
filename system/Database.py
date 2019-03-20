@@ -136,7 +136,7 @@ class Database:
         for row in result:
             return row
 
-        return None
+        return { }
 
     def getList(self, sql, params=[], show_sql=False):
 
