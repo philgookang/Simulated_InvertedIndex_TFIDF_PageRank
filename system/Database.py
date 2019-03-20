@@ -42,7 +42,7 @@ class Database:
         self.mysqlConnection.autocommit = True
 
         # create cusor
-        self.mysqlCursor = self.mysqlConnection.cursor()
+        self.mysqlCursor = self.mysqlConnection.cursor(pymysql.cursors.DictCursor)
 
         # set names
         self.mysqlCursor.execute("SET NAMES utf8mb4 ")
@@ -107,6 +107,8 @@ class Database:
             # execute sql
             self.mysqlCursor.execute(sql, tuple(params))
 
+        except TypeError as error:
+            print("[MYSQL SQL] ", error, sql, params)
         except pymysql.err.ProgrammingError as error:
             code, message = error.args
             print("[MYSQL SQL] ", code, message)

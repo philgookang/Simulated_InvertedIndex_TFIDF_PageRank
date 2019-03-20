@@ -1,3 +1,8 @@
+from component import *
 
-
-print("Hello World!")
+'''
+    Initalize database
+    -> create inverted index table
+    ->
+'''
+Initalize()
