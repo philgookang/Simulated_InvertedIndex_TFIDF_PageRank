@@ -47,4 +47,4 @@ class Initalize:
         Tfidf().create_inverse_document_frequency()
         '''
         # calcuate PageRank
-        PageRank().calculate()
+        PageRank()

@@ -1,15 +1,16 @@
 from model import *
-import collections, math
+import collections
 
 class PageRank:
 
     def __init__(self):
         self.page_probabilities = {} # holds the latest probability for each page
+        self.calculate()
 
     def getWikies(self):
 
         offset      = 0  # pagination offset
-        limit       = 50 # number of items to load per page
+        limit       = 100 # number of items to load per page
         wiki_list   = [] # holds all the wiki pages
 
         while True:  # keep running until we have completed loaded
@@ -26,8 +27,6 @@ class PageRank:
 
             # increase offset
             offset = offset + 1
-
-            break
 
         return wiki_list
 
@@ -46,6 +45,10 @@ class PageRank:
         # loop through wiki list
         for current_id,current_wiki in enumerate(wiki_list):
 
+            # check if convergence is below mark
+            if current_wiki['id'] in self.page_probabilities and self.page_probabilities[ current_wiki['id'] ] <= 0.000000001:
+                continue
+
             summation_probability = 0.0
 
             for other_id,other_wiki in enumerate(wiki_list):
@@ -62,7 +65,11 @@ class PageRank:
                 link_target_counter = collections.Counter(link_target_list)
 
                 # calculate current probabilities
-                probability = self.page_probabilities[other_wiki["id"]] if other_wiki["id"] in self.page_probabilities else (1/N)
+                if other_wiki["id"] in self.page_probabilities:
+                    probability = self.page_probabilities[ other_wiki["id"] ]
+                else:
+                    probability = (1 / N)
+
 
                 # number of links going to currrent wiki / total number of links
                 link_probability = link_target_counter[current_wiki['id']] / link_count
@@ -78,7 +85,6 @@ class PageRank:
 
         # save to database the new probability
         self.saveProbability()
-
 
         if not self.checkAllConverge():
             self.calculate( (attempt + 1) )

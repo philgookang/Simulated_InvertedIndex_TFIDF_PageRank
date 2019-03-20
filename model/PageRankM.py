@@ -37,4 +37,4 @@ class PageRankM:
             WHERE
                 `id`=%s
         '''
-        self.postman.execute(query, [ self.probability, self.idf ])
+        self.postman.execute(query, [ self.probability, self.id ])
