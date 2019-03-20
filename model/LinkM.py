@@ -23,12 +23,15 @@ class LinkM:
         query += " FROM "
         query +=    "`link` "
         query += " WHERE "
-        query += "`id_from` = %s "
+        if hasattr(self, 'id_from'): query += "`id_from` = %s "
+        if hasattr(self, 'id_to'): query += "`id_to` = %s "
         query += group_by
         query += "ORDER BY {0} {1} ".format(sort_by, sdirection)
         if not nolimit and not count:         query += "LIMIT %s offset %s "
 
-        params = [self.id_from]
-        if not nolimit and not count:         params.extend((limit, offset))
+        params = []
+        if hasattr(self, 'id_from'):    params.append( self.id_from )
+        if hasattr(self, 'id_to'):      params.append(self.id_to)
+        if not nolimit and not count:   params.extend((limit, offset))
 
         return self.postman.getList(query, params)
