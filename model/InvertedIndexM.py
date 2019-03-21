@@ -29,3 +29,35 @@ class InvertedIndexM:
                 `id`
         '''
         return self.postman.get(query, [self.term])
+
+    def search(self):
+        query = '''
+            SELECT 
+                `ii`.`term`,
+                `ii`.`id`,
+                `pr`.`probability`,
+                `t`.`tf`,
+                `t`.`idf`,
+                `t`.`tf_idf`
+            FROM 
+                `inverted_index` `ii`,
+                `page_rank` `pr`,
+                `term` `t`
+            WHERE 
+                    `ii`.`id` = `pr`.id 
+                AND
+                    `ii`.`id` = `t`.`id`
+                AND 
+                    `ii`.`term` = `t`.`term`
+                AND
+                    `ii`.`term` = 'was' 
+            GROUP BY 
+                `ii`.`term`,
+                `ii`.`id`,
+                `pr`.`probability`,
+                `t`.`tf`,
+                `t`.`idf`,
+                `t`.`tf_idf`
+            ORDER BY
+                
+        '''
