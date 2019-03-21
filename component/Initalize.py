@@ -7,6 +7,8 @@ class Initalize:
 
     def __init__(self):
 
+        print("building tables...")
+
         offset = 0 # pagination offset
         limit = 100 # number of items to load per page
 
