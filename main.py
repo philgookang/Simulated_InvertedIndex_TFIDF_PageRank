@@ -1,11 +1,21 @@
 from component import *
 
 '''
-    Initalize database
-    -> create inverted index table
-    ->
+    Setup database
+    -> remove any old tables
+    -> create required tables
+    -> added indexes to each table 
 '''
-#Initalize()
+Setup()
+
+'''
+    Initalize database
+    -> calcuate inverted indexes
+    -> term frequency
+    -> inverted term frequency
+    -> page rank
+'''
+Initalize()
 
 while True:
     search_text = input("2018-22788> ")
