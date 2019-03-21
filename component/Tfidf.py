@@ -3,7 +3,7 @@ import collections, math
 
 class Tfidf:
 
-    def __init__(self, wiki, tokenized_word):
+    def __init__(self, wiki = [], tokenized_word = []):
         self.wiki = wiki
         self.tokenized_word = tokenized_word
 
@@ -36,7 +36,7 @@ class Tfidf:
 
     def create_inverse_document_frequency(self):
 
-        limit = 10
+        limit = 100
         offset = 0
 
         while True:
@@ -48,7 +48,6 @@ class Tfidf:
             for term in term_list:
                 occurrences = InvertedIndexM({"term": term["term"]}).getOccurrences()
                 idf = (1 / occurrences["cnt"])
-                TermM(
-                    {"id": term["id"], "term": term["term"], "idf": idf, "tf_idf": (term["tf"] / idf)}).update()
+                TermM({"id": term["id"], "term": term["term"], "idf": idf, "tf_idf": (term["tf"] / idf)}).update()
 
             offset = offset + 1
