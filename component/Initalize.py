@@ -1,13 +1,14 @@
 from model import *
 from component.PageRank import PageRank
+from component.Tfidf import Tfidf
 import nltk
 
 class Initalize:
 
     def __init__(self):
-        '''
+
         offset = 0 # pagination offset
-        limit = 10 # number of items to load per page
+        limit = 100 # number of items to load per page
 
         while True: # create inverted index for each wiki
 
@@ -20,16 +21,8 @@ class Initalize:
             # loop through wiki list
             for wiki in wiki_list:
 
-                # =================
-
-                #tokenizer = RegexpTokenizer('\w+|\$[\d\.]+|\S+')
-                #tokenizer.tokenize(wiki["text"])
-                # <--------------------------------------------------------------- this needs work!
-
                 # get tokenized word
-                tokenized_word = nltk.wordpunct_tokenize(wiki["text"])
-
-                # ===================
+                tokenized_word = nltk.tokenize.word_tokenize(wiki["text"])
 
                 # create inverted index
                 Tfidf(wiki, tokenized_word).create_inverted_index()
@@ -45,6 +38,6 @@ class Initalize:
 
         # calcuate IDF
         Tfidf().create_inverse_document_frequency()
-        '''
+
         # calcuate PageRank
         PageRank()
