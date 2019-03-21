@@ -91,7 +91,6 @@ class PageRank:
             if attempt <= 10: # <------------------------------------ EARSE THIS AFTER TESTING IS COMPLETE
                 self.calculate( (attempt + 1) )
 
-
     def saveProbability(self):
 
         for id in self.page_probabilities:

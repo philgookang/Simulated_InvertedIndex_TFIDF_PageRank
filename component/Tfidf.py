@@ -47,7 +47,14 @@ class Tfidf:
 
             for term in term_list:
                 occurrences = InvertedIndexM({"term": term["term"]}).getOccurrences()
-                idf = (1 / occurrences["cnt"])
-                TermM({"id": term["id"], "term": term["term"], "idf": idf, "tf_idf": (term["tf"] / idf)}).update()
+                idf     = 0
+                tf_idf  = 0
+                if 'cnt' in occurrences:
+                    idf     = (1 / occurrences["cnt"])
+                    tf_idf  = (term["tf"] / idf)
+                else:
+                    print("cnt error " , term, occurrences)
+
+                TermM({"id": term["id"], "term": term["term"], "idf": idf, "tf_idf": tf_idf }).update()
 
             offset = offset + 1

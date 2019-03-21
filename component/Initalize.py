@@ -27,7 +27,7 @@ class Initalize:
                 tokenized_word = nltk.tokenize.word_tokenize(wiki["text"])
 
                 # create inverted index
-                Tfidf(wiki, tokenized_word).create_inverted_index()
+                # Tfidf(wiki, tokenized_word).create_inverted_index()
 
                 # calcuate tf, idf, tfidf
                 Tfidf(wiki, tokenized_word).create_term_frequency()
