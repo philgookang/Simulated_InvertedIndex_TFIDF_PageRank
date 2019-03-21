@@ -31,8 +31,8 @@ class Initalize:
 
                 # calcuate tf, idf, tfidf
                 Tfidf(wiki, tokenized_word).create_term_frequency()
-                break
-            break
+                #break
+            #break
 
             offset = offset + 1  # increase page offset
 
