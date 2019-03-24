@@ -10,9 +10,9 @@ class InvertedIndexM:
     def createmany(self, lst):
         query = '''
             INSERT INTO `inverted_index`
-                ( `term`, `id`, `location`)
+                ( `term`, `id`)
             VALUES
-                ( %s, %s, %s )
+                ( %s, %s )
         '''
         self.postman.executemany(query, lst)
 

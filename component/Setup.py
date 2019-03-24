@@ -12,14 +12,14 @@ class Setup:
     def drop_tables(self):
         self.postman.execute(" DROP TABLE `inverted_index` ")
         self.postman.execute(" DROP TABLE `page_rank` ")
-        self.postman.execute(" DROP TABLE `term` ")
+        self.postman.execute(" DROP TABLE `term_tf` ")
+        self.postman.execute(" DROP TABLE `term_idf` ")
 
     def create_tables(self):
         query_inverted_index = '''
             CREATE TABLE `inverted_index` (
               `term` varchar(700) NOT NULL COMMENT '개별단어',
-              `id` int(11) NOT NULL COMMENT '해당 단어가 포함된 문서 id',
-              `location` int(11) NOT NULL COMMENT '문구에 순서 위치'
+              `id` int(11) NOT NULL COMMENT '해당 단어가 포함된 문서 id'
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         '''
         query_page_rank = '''
@@ -28,7 +28,7 @@ class Setup:
               `probability` double NOT NULL
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         '''
-        query_term = '''
+        query_term_tf = '''
             CREATE TABLE `term_tf` (
               `term` varchar(700) NOT NULL,
               `id` int(11) NOT NULL,
@@ -36,7 +36,7 @@ class Setup:
               `tf` double NOT NULL
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         '''
-        query_term = '''
+        query_term_idf = '''
             CREATE TABLE `term_idf` (
               `term` varchar(700) NOT NULL,
               `id` int(11) NOT NULL,
@@ -46,26 +46,31 @@ class Setup:
         '''
         self.postman.execute(query_inverted_index)
         self.postman.execute(query_page_rank)
-        self.postman.execute(query_term)
+        self.postman.execute(query_term_tf)
+        self.postman.execute(query_term_idf)
 
     def add_indexes(self):
         self.postman.execute(" ALTER TABLE `inverted_index` ADD INDEX( `term`); ")
         self.postman.execute(" ALTER TABLE `inverted_index` ADD INDEX( `id`); ")
-        self.postman.execute(" ALTER TABLE `inverted_index` ADD INDEX( `location`); ")
-        self.postman.execute(" ALTER TABLE `inverted_index` ADD INDEX( `id`, `location`); ")
         self.postman.execute(" ALTER TABLE `inverted_index` ADD INDEX( `term`, `id`); ")
-        self.postman.execute(" ALTER TABLE `inverted_index` ADD INDEX( `term`, `location`); ")
 
         self.postman.execute(" ALTER TABLE `page_rank` ADD INDEX( `id`); ")
         self.postman.execute(" ALTER TABLE `page_rank` ADD INDEX( `probability`); ")
         self.postman.execute(" ALTER TABLE `page_rank` ADD INDEX( `id`, `probability`); ")
 
-        self.postman.execute(" ALTER TABLE `term` ADD INDEX( `term`); ")
-        self.postman.execute(" ALTER TABLE `term` ADD INDEX( `id`); ")
-        self.postman.execute(" ALTER TABLE `term` ADD INDEX( `term`, `id`); ")
-        self.postman.execute(" ALTER TABLE `term` ADD INDEX( `tf`); ")
-        self.postman.execute(" ALTER TABLE `term` ADD INDEX( `idf`); ")
-        self.postman.execute(" ALTER TABLE `term` ADD INDEX( `tf_idf`); ")
-        self.postman.execute(" ALTER TABLE `term` ADD INDEX( `idf`, `tf_idf`); ")
-        self.postman.execute(" ALTER TABLE `term` ADD INDEX( `tf`, `idf`); ")
+        self.postman.execute(" ALTER TABLE `term_tf` ADD INDEX( `term`); ")
+        self.postman.execute(" ALTER TABLE `term_tf` ADD INDEX( `id`); ")
+        self.postman.execute(" ALTER TABLE `term_tf` ADD INDEX( `tf`); ")
+
+        self.postman.execute(" ALTER TABLE `term_tf` ADD INDEX( `term`, `id`); ")
+        self.postman.execute(" ALTER TABLE `term_tf` ADD INDEX( `term`, `tf`); ")
+        self.postman.execute(" ALTER TABLE `term_tf` ADD INDEX( `id`, `tf`); ")
+
+        self.postman.execute(" ALTER TABLE `term_idf` ADD INDEX( `term`); ")
+        self.postman.execute(" ALTER TABLE `term_idf` ADD INDEX( `id`); ")
+        self.postman.execute(" ALTER TABLE `term_idf` ADD INDEX( `term`, `id`); ")
+        self.postman.execute(" ALTER TABLE `term_idf` ADD INDEX( `idf`); ")
+        self.postman.execute(" ALTER TABLE `term_idf` ADD INDEX( `tf_idf`); ")
+        self.postman.execute(" ALTER TABLE `term_idf` ADD INDEX( `term`, `id`, `idf`); ")
+        self.postman.execute(" ALTER TABLE `term_idf` ADD INDEX( `term`, `id`, `tf_idf`); ")
 

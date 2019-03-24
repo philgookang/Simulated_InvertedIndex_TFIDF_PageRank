@@ -10,7 +10,9 @@ class Initalize:
         print("building tables...")
 
         offset = 0 # pagination offset
-        limit = 100 # number of items to load per page
+        limit = 200 # number of items to load per page
+
+        start = time.time()
 
         while True: # create inverted index for each wiki
 
@@ -22,8 +24,6 @@ class Initalize:
 
             # loop through wiki list
             for wiki in wiki_list:
-
-                start = time.time()
 
                 # get tokenized word
                 tokenized_word = nltk.tokenize.word_tokenize(wiki["text"])
@@ -40,8 +40,12 @@ class Initalize:
 
         # ===============
 
+        print("a", (time.time()-start))
+
         # calcuate IDF
         Tfidf().create_inverse_document_frequency()
+
+        print("b", (time.time() - start))
 
         # calcuate PageRank
         # PageRank()

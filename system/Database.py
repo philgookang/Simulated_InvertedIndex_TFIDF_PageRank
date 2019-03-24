@@ -71,7 +71,7 @@ class Database:
         result = current_time - self.connection_start
 
         # check if time diff is larger than 5 minutes
-        if result >= 20:
+        if result >= 300:
 
             try:
                 # clean up cursor
@@ -102,6 +102,8 @@ class Database:
         # check if connection time has been too long
         self.check_connection_time()
 
+        start = time.time()
+
         try:
 
             # execute sql
@@ -119,6 +121,12 @@ class Database:
         if show_sql:
             print(self.mysqlCursor.statement)
 
+        end = time.time()
+
+        if (end - start) >= 0.5:
+            pass
+            # print( 'SLOW', end - start, sql, params )
+
         # apply transaction to database
         self.mysqlConnection.commit()
 
@@ -132,7 +140,7 @@ class Database:
         try:
 
             # execute sql
-            self.mysqlCursor.executemany(sql, tuple(params))
+            self.mysqlCursor.executemany(sql, params)
 
         except TypeError as error:
             print("[MYSQL SQL] ", error, sql, params)
