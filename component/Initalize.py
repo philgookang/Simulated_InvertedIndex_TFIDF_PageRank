@@ -1,7 +1,7 @@
 from model import *
 from component.PageRank import PageRank
 from component.Tfidf import Tfidf
-import nltk
+import nltk, time
 
 class Initalize:
 
@@ -23,11 +23,13 @@ class Initalize:
             # loop through wiki list
             for wiki in wiki_list:
 
+                start = time.time()
+
                 # get tokenized word
                 tokenized_word = nltk.tokenize.word_tokenize(wiki["text"])
 
                 # create inverted index
-                # Tfidf(wiki, tokenized_word).create_inverted_index()
+                Tfidf(wiki, tokenized_word).create_inverted_index()
 
                 # calcuate tf, idf, tfidf
                 Tfidf(wiki, tokenized_word).create_term_frequency()
@@ -42,4 +44,4 @@ class Initalize:
         Tfidf().create_inverse_document_frequency()
 
         # calcuate PageRank
-        PageRank()
+        # PageRank()

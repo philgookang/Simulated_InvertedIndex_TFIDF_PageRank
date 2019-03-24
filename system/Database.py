@@ -124,6 +124,33 @@ class Database:
 
         return self.mysqlCursor
 
+    def executemany(self, sql, params=[], show_sql=False):
+
+        # check if connection time has been too long
+        self.check_connection_time()
+
+        try:
+
+            # execute sql
+            self.mysqlCursor.executemany(sql, tuple(params))
+
+        except TypeError as error:
+            print("[MYSQL SQL] ", error, sql, params)
+        except pymysql.err.ProgrammingError as error:
+            code, message = error.args
+            print("[MYSQL SQL] ", code, message)
+        except pymysql.InternalError as error:
+            code, message = error.args
+            print("[MYSQL ERROR] ", code, message)
+
+        if show_sql:
+            print(self.mysqlCursor.statement)
+
+        # apply transaction to database
+        self.mysqlConnection.commit()
+
+        return self.mysqlCursor
+
     def create(self, sql, params=[], show_sql=False):
 
         result = self.execute(sql, params, show_sql)

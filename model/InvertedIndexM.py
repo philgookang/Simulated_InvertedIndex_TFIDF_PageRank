@@ -7,26 +7,26 @@ class InvertedIndexM:
         for key,val in dicts.items():
             setattr(self, str(key), val)
 
-    def create(self):
+    def createmany(self, lst):
         query = '''
             INSERT INTO `inverted_index`
                 ( `term`, `id`, `location`)
             VALUES
                 ( %s, %s, %s )
         '''
-        return self.postman.create(query, [self.term, self.id, self.location])
+        self.postman.executemany(query, lst)
 
     def getOccurrences(self):
 
         query = '''
             SELECT 
-                count(id) as cnt
+                count(term) as cnt
             FROM
                 `inverted_index`
             WHERE
-                `term`=%s
+                `term` COLLATE utf8mb4_bin = %s
             GROUP BY
-                `id`
+                `term`
         '''
         return self.postman.get(query, [self.term])
 

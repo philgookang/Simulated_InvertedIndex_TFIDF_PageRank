@@ -1,22 +1,20 @@
 from system import *
 
-class TermM:
+class TermTFM:
 
     def __init__(self, dicts = {}):
         self.postman = Database.init()
         for key,val in dicts.items():
             setattr(self, str(key), val)
 
-    def create(self):
-        idf = 0
-        tf_idf = 0
+    def createmany(self, lst):
         query = '''
-            INSERT INTO `term`
+            INSERT INTO `term_tf`
                 ( `term`, `id`, `occurrences`, `tf`, `idf`, `tf_idf`)
             VALUES
                 ( %s, %s, %s, %s, %s, %s )
         '''
-        return self.postman.create(query, [self.term, self.id, self.occurrences, self.tf, idf, tf_idf])
+        return self.postman.executemany(query, lst)
 
     def getList(self, **kwargs):
 
@@ -32,7 +30,7 @@ class TermM:
         query = "SELECT "
         query += select
         query += " FROM "
-        query +=    "`term` "
+        query +=    "`term_tf` "
         query += group_by
         query += "ORDER BY {0} {1} ".format(sort_by, sdirection)
         if not nolimit and not count:         query += "LIMIT %s offset %s "
@@ -41,17 +39,3 @@ class TermM:
         if not nolimit and not count:         params.extend((limit, offset))
 
         return self.postman.getList(query, params)
-
-    def update(self):
-
-        query = '''
-            UPDATE
-                `term`
-            SET
-                `idf`=%s,
-                `tf_idf`=%s
-            WHERE
-                `id`=%s AND
-                `term`=%s
-        '''
-        self.postman.execute(query, [ self.idf, self.tf_idf, self.id, self.term ])

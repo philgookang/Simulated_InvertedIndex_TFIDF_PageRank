@@ -9,10 +9,22 @@ class Tfidf:
 
     def create_inverted_index(self):
 
+        # remove duplicates
+        tokenized_word_list = set(self.tokenized_word)
+
+        # holds lst to insert
+        tmp_list = []
+
         # insert each work to inverted_index table
-        for index, word in enumerate(self.tokenized_word):
-            inverted_index = InvertedIndexM({"id": self.wiki["id"], "term": word, "location": index})
-            inverted_index.create()
+        for index, word in enumerate(tokenized_word_list):
+            tmp_list.append( (word, self.wiki["id"], index) )
+            if index % 300 == 0:
+                InvertedIndexM().createmany(tmp_list)
+                tmp_list.clear()
+
+        # check for any left overs!
+        if len(tmp_list):
+            InvertedIndexM().createmany(tmp_list)
 
     def create_term_frequency(self):
 
@@ -22,8 +34,11 @@ class Tfidf:
         # n(d,t) get number if occurences of the term t in document d
         term_counter = collections.Counter(self.tokenized_word)
 
+        # tmp list to hold insert
+        tmp_list = []
+
         # loop through the keys
-        for term in term_counter:
+        for index,term in enumerate(term_counter):
 
             # number of occurrences
             term_count = term_counter[term]
@@ -31,8 +46,18 @@ class Tfidf:
             # TF(d,t) = log(1 + n(d,t)/n(d))
             tf = math.log(1 + (term_count / total_term_count))
 
-            # create term frequency to database
-            TermM({"id": self.wiki["id"], "term": term, "occurrences": term_count, "tf": tf}).create()
+            # add to create list
+            tmp_list.append((term, self.wiki["id"], term_count, tf, 0, 0))
+
+            if index % 300 == 0:
+                # create term frequency to database
+                TermTFM().createmany(tmp_list)
+
+                # clear list
+                tmp_list.clear()
+
+        if len(tmp_list):
+            TermTFM().createmany(tmp_list)
 
     def create_inverse_document_frequency(self):
 
@@ -41,7 +66,7 @@ class Tfidf:
 
         while True:
 
-            term_list = TermM().getList(limit=limit, offset=(limit * offset))
+            term_list = TermTFM().getList(limit=limit, offset=(limit * offset))
 
             if not len(term_list):break
 
@@ -55,6 +80,7 @@ class Tfidf:
                 else:
                     print("cnt error " , term, occurrences)
 
-                TermM({"id": term["id"], "term": term["term"], "idf": idf, "tf_idf": tf_idf }).update()
+                # TermM({"id": term["id"], "term": term["term"], "idf": idf, "tf_idf": tf_idf }).update()
+                # add to termidf
 
             offset = offset + 1

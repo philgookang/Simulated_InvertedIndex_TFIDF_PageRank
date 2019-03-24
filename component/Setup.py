@@ -29,11 +29,17 @@ class Setup:
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         '''
         query_term = '''
-            CREATE TABLE `term` (
+            CREATE TABLE `term_tf` (
               `term` varchar(700) NOT NULL,
               `id` int(11) NOT NULL,
               `occurrences` int(11) NOT NULL,
-              `tf` double NOT NULL,
+              `tf` double NOT NULL
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+        '''
+        query_term = '''
+            CREATE TABLE `term_idf` (
+              `term` varchar(700) NOT NULL,
+              `id` int(11) NOT NULL,
               `idf` double NOT NULL,
               `tf_idf` double NOT NULL
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
