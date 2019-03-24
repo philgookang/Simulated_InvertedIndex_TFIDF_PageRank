@@ -49,4 +49,4 @@ class Initalize:
         print("b", (time.time() - start2))
 
         # calcuate PageRank
-        # PageRank()
+        PageRank()

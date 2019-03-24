@@ -31,12 +31,10 @@ class PageRank:
         return wiki_list
 
     def checkAllConverge(self):
+
         for id in self.page_probabilities:
             if self.page_probabilities[id] > 0.000000001:
                 return False
-
-        # save to database the new probability
-        self.saveProbability()
 
         # no more need to run!
         return True
@@ -90,8 +88,14 @@ class PageRank:
             self.page_probabilities[ current_wiki['id'] ] = page_rank_probability
 
         if not self.checkAllConverge():
-            if attempt <= 10: # <------------------------------------ EARSE THIS AFTER TESTING IS COMPLETE
+            if attempt <= 2: # <------------------------------------ EARSE THIS AFTER TESTING IS COMPLETE
                 self.calculate( (attempt + 1) )
+            else:
+                # save to database the new probability
+                self.saveProbability()
+        else:
+            # save to database the new probability
+            self.saveProbability()
 
     def saveProbability(self):
 

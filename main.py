@@ -1,4 +1,5 @@
 from component import *
+from model import *
 
 '''
     Setup database
@@ -17,9 +18,10 @@ Setup()
 '''
 Initalize()
 
+print("ready to search")
 while True:
     search_text = input("2018-22788> ")
     search_word = search_text.split()
-
-    for word in search_word:
-        result = []
+    results = SearchM().search(search_word)
+    for result in results:
+        print("{0}, {1}, {2}, {3}".format(result["id"], result["title"], result["idf"], result["total_value"]) )
