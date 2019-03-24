@@ -4,44 +4,46 @@ import time
 
 class Tfidf:
 
-    def __init__(self, wiki = [], tokenized_word = []):
-        self.wiki = wiki
-        self.tokenized_word = tokenized_word
+    def __init__(self):
+        self.tmp_inverted_index_list = []
+        self.tmp_term_frequency_list = []
+        self.CREATE_LIMIT           = 30000
+        self.RETREIEVE_LIMIT        = 12000
 
-    def create_inverted_index(self):
+    def check_leftover(self):
+
+        if len(self.tmp_inverted_index_list):
+            InvertedIndexM().createmany(self.tmp_inverted_index_list)
+            self.tmp_inverted_index_list.clear()
+
+        if len(self.tmp_term_frequency_list):
+            TermTFM().createmany(self.tmp_term_frequency_list)
+            self.tmp_term_frequency_list.clear()
+
+    def create_inverted_index(self, wiki, tokenized_word):
 
         # remove duplicates
-        tokenized_word_list = set(self.tokenized_word)
-
-        # holds lst to insert
-        tmp_list = []
+        tokenized_word_list = set(tokenized_word)
 
         # insert each work to inverted_index table
-        for index, word in enumerate(tokenized_word_list):
+        for word in tokenized_word_list:
 
-            tmp_list.append( (word, self.wiki["id"]) )
+            self.tmp_inverted_index_list.append( (word, wiki["id"], word) )
 
-            if len(tmp_list) % 7000 == 0:
-                InvertedIndexM().createmany(tmp_list)
-                tmp_list.clear()
+            if len(self.tmp_inverted_index_list) % self.CREATE_LIMIT == 0:
+                InvertedIndexM().createmany(self.tmp_inverted_index_list)
+                self.tmp_inverted_index_list.clear()
 
-        # check for any left overs!
-        if len(tmp_list):
-            InvertedIndexM().createmany(tmp_list)
-
-    def create_term_frequency(self):
+    def create_term_frequency(self, wiki, tokenized_word):
 
         # n(d) save the total number of terms in document
-        total_term_count = len(set(self.tokenized_word))
+        total_term_count = len(set(tokenized_word))
 
         # n(d,t) get number if occurences of the term t in document d
-        term_counter = collections.Counter(self.tokenized_word)
-
-        # tmp list to hold insert
-        tmp_list = []
+        term_counter = collections.Counter(tokenized_word)
 
         # loop through the keys
-        for index,term in enumerate(term_counter):
+        for term in term_counter:
 
             # number of occurrences
             term_count = term_counter[term]
@@ -50,80 +52,41 @@ class Tfidf:
             tf = math.log(1 + (term_count / total_term_count))
 
             # add to create list
-            tmp_list.append((term, self.wiki["id"], term_count, tf))
+            self.tmp_term_frequency_list.append((term, wiki["id"], term_count, tf))
 
-            if len(tmp_list) % 7000 == 0:
-                TermTFM().createmany(tmp_list)
-                tmp_list.clear()
-
-        if len(tmp_list):
-            TermTFM().createmany(tmp_list)
+            if len(self.tmp_term_frequency_list) % self.CREATE_LIMIT == 0:
+                TermTFM().createmany(self.tmp_term_frequency_list)
+                self.tmp_term_frequency_list.clear()
 
     def create_inverse_document_frequency(self):
 
-        start = time.time()
-
-        limit       = 500
+        limit       = self.RETREIEVE_LIMIT
         offset      = 0
         tmp_list    = []
+        # start       = time.time()
 
         while True:
 
-            term_list = TermTFM().getList3(limit=limit, offset=(limit * offset))
+            term_list = TermTFM().getList(limit=limit, offset=(limit * offset))
 
             if not len(term_list):break
 
-            for index, term in enumerate(term_list):
+            for term in term_list:
 
                 idf = (1 / term["cnt"])
                 tf_idf = (term["tf"] / idf)
 
                 tmp_list.append( (term["term"], term["id"], idf, tf_idf) )
 
-                if len(tmp_list) % 7000 == 0:
+                if len(tmp_list) % self.CREATE_LIMIT == 0:
                     TermIDFM().createmany(tmp_list)
                     tmp_list.clear()
 
-            if len(tmp_list) == 1000:
-                print(time.time()-start)
+                # if len(tmp_list)%1000 == 0:
+                #     print("middle ", (time.time() - start) )
+                #     start = time.time()
 
             offset = offset + 1
 
         if len(tmp_list):
             TermIDFM().createmany(tmp_list)
-
-        #
-        # limit       = 100
-        # offset      = 0
-        # tmp_list    = []
-        #
-        # while True:
-        #
-        #     term_list = TermTFM().getList(limit=limit, offset=(limit * offset))
-        #
-        #     if not len(term_list):break
-        #
-        #     for index, term in enumerate(term_list):
-        #         occurrences = InvertedIndexM({"term": term["term"]}).getOccurrences()
-        #         idf     = 0
-        #         tf_idf  = 0
-        #         if 'cnt' in occurrences:
-        #             idf     = (1 / occurrences["cnt"])
-        #             tf_idf  = (term["tf"] / idf)
-        #         else:
-        #             print("cnt error " , term, occurrences)
-        #
-        #         tmp_list.append( (term["term"], term["id"], idf, tf_idf) )
-        #
-        #         if len(tmp_list) % 7000 == 0:
-        #             TermIDFM().createmany(tmp_list)
-        #             tmp_list.clear()
-        #
-        #
-        #     if len(tmp_list) == 1000:
-        #         print(time.time()-start)
-        #
-        #     offset = offset + 1
-        #
-        # if len(tmp_list):
-        #     TermIDFM().createmany(tmp_list)

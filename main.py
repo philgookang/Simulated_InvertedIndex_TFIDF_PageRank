@@ -6,9 +6,7 @@ from component import *
     -> create required tables
     -> added indexes to each table 
 '''
-print("Begin Setup")
 Setup()
-print("End Setup")
 
 '''
     Initalize database
@@ -17,9 +15,7 @@ print("End Setup")
     -> inverted term frequency
     -> page rank
 '''
-print("Begin Initalize")
 Initalize()
-print("End Initalize")
 
 while True:
     search_text = input("2018-22788> ")

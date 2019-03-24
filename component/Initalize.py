@@ -9,8 +9,9 @@ class Initalize:
 
         print("building tables...")
 
-        offset = 0 # pagination offset
-        limit = 200 # number of items to load per page
+        offset  = 0 # pagination offset
+        limit   = 500 # number of items to load per page
+        tfidf = Tfidf()
 
         start = time.time()
 
@@ -29,23 +30,23 @@ class Initalize:
                 tokenized_word = nltk.tokenize.word_tokenize(wiki["text"])
 
                 # create inverted index
-                Tfidf(wiki, tokenized_word).create_inverted_index()
+                tfidf.create_inverted_index(wiki, tokenized_word)
 
                 # calcuate tf, idf, tfidf
-                Tfidf(wiki, tokenized_word).create_term_frequency()
-                #break
-            #break
+                tfidf.create_term_frequency(wiki, tokenized_word)
 
             offset = offset + 1  # increase page offset
+        tfidf.check_leftover()
 
         # ===============
 
         print("a", (time.time()-start))
+        start2 = time.time()
 
         # calcuate IDF
         Tfidf().create_inverse_document_frequency()
 
-        print("b", (time.time() - start))
+        print("b", (time.time() - start2))
 
         # calcuate PageRank
         # PageRank()

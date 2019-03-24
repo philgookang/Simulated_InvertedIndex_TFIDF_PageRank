@@ -19,7 +19,8 @@ class Setup:
         query_inverted_index = '''
             CREATE TABLE `inverted_index` (
               `term` varchar(700) NOT NULL COMMENT '개별단어',
-              `id` int(11) NOT NULL COMMENT '해당 단어가 포함된 문서 id'
+              `id` int(11) NOT NULL COMMENT '해당 단어가 포함된 문서 id',
+              `term_encod` varchar(700) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         '''
         query_page_rank = '''
@@ -53,6 +54,9 @@ class Setup:
         self.postman.execute(" ALTER TABLE `inverted_index` ADD INDEX( `term`); ")
         self.postman.execute(" ALTER TABLE `inverted_index` ADD INDEX( `id`); ")
         self.postman.execute(" ALTER TABLE `inverted_index` ADD INDEX( `term`, `id`); ")
+        self.postman.execute(" ALTER TABLE `inverted_index` ADD INDEX( `term_encod`); ")
+        self.postman.execute(" ALTER TABLE `inverted_index` ADD INDEX( `id`, `term_encod`); ")
+
 
         self.postman.execute(" ALTER TABLE `page_rank` ADD INDEX( `id`); ")
         self.postman.execute(" ALTER TABLE `page_rank` ADD INDEX( `probability`); ")
