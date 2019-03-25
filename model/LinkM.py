@@ -22,7 +22,8 @@ class LinkM:
         query += select
         query += " FROM "
         query +=    "`link` "
-        query += " WHERE "
+        if hasattr(self, 'id_from') or hasattr(self, 'id_to'):
+            query += " WHERE "
         if hasattr(self, 'id_from'): query += "`id_from` = %s "
         if hasattr(self, 'id_to'): query += "`id_to` = %s "
         query += group_by
