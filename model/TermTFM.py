@@ -23,12 +23,6 @@ class TermTFM:
         limit       = kwargs['limit']               if 'limit'              in kwargs else 20
         offset      = kwargs['offset']              if 'offset'             in kwargs else 0
 
-        '''
-        count(`inverted_index`.`term`) as cnt,
-        `inverted_index`.`term` COLLATE utf8mb4_bin = `ttf`.`term`
-        `inverted_index`.`term`,
-        '''
-
         query = '''
             SELECT 
                 count(`inverted_index`.`term_encod`) as cnt,
