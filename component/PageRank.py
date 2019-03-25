@@ -5,13 +5,14 @@ class PageRank:
 
     def __init__(self):
         self.page_probabilities = {} # holds the latest probability for each page
+        self.getWikies()
         self.calculate()
 
     def getWikies(self):
 
-        offset      = 0  # pagination offset
-        limit       = 1000 # number of items to load per page
-        wiki_list   = [] # holds all the wiki pages
+        offset          = 0  # pagination offset
+        limit           = 1000 # number of items to load per page
+        self.wiki_list  = [] # holds all the wiki pages
 
         while True:  # keep running until we have completed loaded
 
@@ -23,22 +24,19 @@ class PageRank:
                 break
 
             # add content
-            wiki_list.extend(tmp_list)
+            self.wiki_list.extend(tmp_list)
 
             # increase offset
             offset = offset + 1
 
-        return wiki_list
-
     def calculate(self, attempt = 0):
 
-        wiki_list       = self.getWikies()          # get list of all wiki pages
-        N               = len(wiki_list)            # total number of pages
+        N               = len(self.wiki_list)       # total number of pages
         epsilon         = 0.15                      # jump to any other node with probability E
         total_change    = 0                         # total change in probability
 
         # loop through wiki list
-        for current_id,current_wiki in enumerate(wiki_list):
+        for current_id,current_wiki in enumerate(self.wiki_list):
 
             summation_probability = 0.0
 
