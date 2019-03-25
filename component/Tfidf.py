@@ -63,7 +63,6 @@ class Tfidf:
         limit       = self.RETREIEVE_LIMIT
         offset      = 0
         tmp_list    = []
-        # start       = time.time()
 
         while True:
 
@@ -81,10 +80,6 @@ class Tfidf:
                 if len(tmp_list) % self.CREATE_LIMIT == 0:
                     TermIDFM().createmany(tmp_list)
                     tmp_list.clear()
-
-                # if len(tmp_list)%1000 == 0:
-                #     print("middle ", (time.time() - start) )
-                #     start = time.time()
 
             offset = offset + 1
 

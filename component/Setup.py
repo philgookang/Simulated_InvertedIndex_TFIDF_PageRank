@@ -10,10 +10,10 @@ class Setup:
         self.add_indexes()
 
     def drop_tables(self):
-        self.postman.execute(" DROP TABLE `inverted_index` ")
-        self.postman.execute(" DROP TABLE `page_rank` ")
-        self.postman.execute(" DROP TABLE `term_tf` ")
-        self.postman.execute(" DROP TABLE `term_idf` ")
+        self.postman.execute(" DROP TABLE IF EXISTS `inverted_index` ")
+        self.postman.execute(" DROP TABLE IF EXISTS `page_rank` ")
+        self.postman.execute(" DROP TABLE IF EXISTS `term_tf` ")
+        self.postman.execute(" DROP TABLE IF EXISTS `term_idf` ")
 
     def create_tables(self):
         query_inverted_index = '''
@@ -56,7 +56,6 @@ class Setup:
         self.postman.execute(" ALTER TABLE `inverted_index` ADD INDEX( `term`, `id`); ")
         self.postman.execute(" ALTER TABLE `inverted_index` ADD INDEX( `term_encod`); ")
         self.postman.execute(" ALTER TABLE `inverted_index` ADD INDEX( `id`, `term_encod`); ")
-
 
         self.postman.execute(" ALTER TABLE `page_rank` ADD INDEX( `id`); ")
         self.postman.execute(" ALTER TABLE `page_rank` ADD INDEX( `probability`); ")

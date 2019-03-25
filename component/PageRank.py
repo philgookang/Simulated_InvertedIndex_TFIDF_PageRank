@@ -30,27 +30,15 @@ class PageRank:
 
         return wiki_list
 
-    def checkAllConverge(self):
-
-        for id in self.page_probabilities:
-            if self.page_probabilities[id] > 0.000000001:
-                return False
-
-        # no more need to run!
-        return True
-
     def calculate(self, attempt = 0):
 
-        wiki_list   =  self.getWikies()         # get list of all wiki pages
-        N           = len(wiki_list)            # total number of pages
-        epsilon     = 0.15                      # jump to any other node with probability E
+        wiki_list       = self.getWikies()          # get list of all wiki pages
+        N               = len(wiki_list)            # total number of pages
+        epsilon         = 0.15                      # jump to any other node with probability E
+        total_change    = 0                         # total change in probability
 
         # loop through wiki list
         for current_id,current_wiki in enumerate(wiki_list):
-
-            # check if convergence is below mark
-            if current_wiki['id'] in self.page_probabilities and self.page_probabilities[ current_wiki['id'] ] <= 0.000000001:
-                continue
 
             summation_probability = 0.0
 
@@ -84,15 +72,16 @@ class PageRank:
             # get page rank probability
             page_rank_probability = (epsilon/N) + (1 - epsilon) * summation_probability
 
+            if attempt != 0:
+                # save the total change
+                total_change = total_change + abs(self.page_probabilities[ current_wiki['id'] ] - page_rank_probability)
+
             # keep page rank local version
             self.page_probabilities[ current_wiki['id'] ] = page_rank_probability
 
-        if not self.checkAllConverge():
-            if attempt <= 2: # <------------------------------------ EARSE THIS AFTER TESTING IS COMPLETE
-                self.calculate( (attempt + 1) )
-            else:
-                # save to database the new probability
-                self.saveProbability()
+        if attempt == 0  or total_change > 0.000000001:
+            print("total change", total_change, attempt)
+            self.calculate( (attempt + 1) )
         else:
             # save to database the new probability
             self.saveProbability()
