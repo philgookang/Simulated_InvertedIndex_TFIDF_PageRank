@@ -10,13 +10,13 @@ class PageRank:
     def getWikies(self):
 
         offset      = 0  # pagination offset
-        limit       = 100 # number of items to load per page
+        limit       = 1000 # number of items to load per page
         wiki_list   = [] # holds all the wiki pages
 
         while True:  # keep running until we have completed loaded
 
             # get list of wiki
-            tmp_list = WikiM().getList(limit=limit, offset=(limit * offset), select=' id ')
+            tmp_list = LinkM().getList(limit=limit, offset=(limit * offset), select=' DISTINCT id_from as id ', sort_by = ' id_from ')
 
             # check if list is empty
             if not len(tmp_list):
