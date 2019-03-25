@@ -177,14 +177,18 @@ class Database:
 
         result = self.execute(sql, params, show_sql)
 
+        if result._rows != None and len(result._rows):
+            return result._rows
+        return []
+
         # return list
-        list = []
+        #list = []
 
         # loop through result
-        for item in result:
-            list.append(item)
+        #for item in result:
+        #    list.append(item)
 
-        return list
+        #return list
 
     def __del__(self):
 
