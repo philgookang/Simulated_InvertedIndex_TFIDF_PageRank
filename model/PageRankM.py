@@ -7,14 +7,14 @@ class PageRankM:
         for key,val in dicts.items():
             setattr(self, str(key), val)
 
-    def create(self):
+    def createmany(self, lst):
         query = '''
             INSERT INTO `page_rank`
                 ( `id`, `probability`)
             VALUES
                 ( %s, %s )
         '''
-        return self.postman.create(query, [self.id, self.probability])
+        return self.postman.executemany(query, lst)
 
     def get(self):
         query = '''
@@ -26,15 +26,3 @@ class PageRankM:
                 `id` = %s
         '''
         return self.postman.get(query, [self.id])
-
-    def update(self):
-
-        query = '''
-            UPDATE
-                `page_rank`
-            SET
-                `probability`=%s
-            WHERE
-                `id`=%s
-        '''
-        self.postman.execute(query, [ self.probability, self.id ])

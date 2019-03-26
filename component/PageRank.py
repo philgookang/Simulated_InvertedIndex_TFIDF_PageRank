@@ -78,7 +78,7 @@ class PageRank:
             # keep page rank local version
             self.page_probabilities[ current_wiki['id'] ] = page_rank_probability
 
-        if attempt == 0  or total_change > 0.000000001:
+        if attempt == 0  or total_change > 1e-8:
             print("total change", total_change, attempt)
             self.calculate( (attempt + 1) )
         else:
@@ -86,18 +86,7 @@ class PageRank:
             self.saveProbability()
 
     def saveProbability(self):
-
-        for id in self.page_probabilities:
-
-            page_rank               = PageRankM()
-            page_rank.id            = id
-            page_rank.probability   = self.page_probabilities[id]
-
-            check = page_rank.get()
-
-            if 'id' in check:
-                page_rank.update()
-            else:
-                page_rank.create()
+        create_list = [ (id, self.page_probabilities[id]) for id in self.page_probabilities]
+        PageRankM().createmany( create_list )
 
 
