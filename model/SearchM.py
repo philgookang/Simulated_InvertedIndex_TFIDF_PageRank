@@ -16,7 +16,6 @@ class SearchM:
                 search_query = search_query + " , "
             search_query = search_query + " %s "
 
-
         query = '''
             SELECT 
                 `wiki`.`title`,
