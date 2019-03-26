@@ -13,8 +13,6 @@ class Initalize:
         limit   = 500 # number of items to load per page
         tfidf = Tfidf()
 
-        start = time.time()
-
         while True: # create inverted index for each wiki
 
             # get list of wiki
@@ -36,17 +34,13 @@ class Initalize:
                 tfidf.create_term_frequency(wiki, tokenized_word)
 
             offset = offset + 1  # increase page offset
+
         tfidf.check_leftover()
 
         # ===============
 
-        print("a", (time.time()-start))
-        start2 = time.time()
-
         # calcuate IDF
         Tfidf().create_inverse_document_frequency()
-
-        print("b", (time.time() - start2))
 
         # calcuate PageRank
         PageRank()
