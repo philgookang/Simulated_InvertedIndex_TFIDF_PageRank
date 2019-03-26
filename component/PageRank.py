@@ -4,6 +4,8 @@ import collections
 class PageRank:
 
     def __init__(self):
+        self.linked_wiki_list = {};
+        self.leaving_link_list = {};
         self.page_probabilities = {} # holds the latest probability for each page
         self.getWikies()
         self.calculate()
@@ -30,6 +32,18 @@ class PageRank:
             # increase offset
             offset = offset + 1
 
+    def getLinkedWikiList(self, id):
+        if id in self.linked_wiki_list:
+            return self.linked_wiki_list[id]
+        self.linked_wiki_list[id] = LinkM({"id_to": id}).getList(nolimit=True, select=" id_from ")
+        return self.linked_wiki_list[id]
+
+    def getLeavingWikiList(self, id):
+        if id in self.leaving_link_list:
+            return self.leaving_link_list[id]
+        self.leaving_link_list[id] = LinkM({ "id_from" : id }).getList(nolimit = True, select = " id_to ")
+        return self.leaving_link_list[id]
+
     def calculate(self, attempt = 0):
 
         N               = self.N["cnt"]             # total number of pages
@@ -41,12 +55,12 @@ class PageRank:
 
             summation_probability = 0.0
 
-            linked_wiki_list = LinkM({ "id_to" : current_wiki['id'] }).getList(nolimit = True, select = " id_from ")
+            linked_wiki_list = self.getLinkedWikiList(current_wiki['id'])
 
             for other_id,other_wiki in enumerate(linked_wiki_list):
 
                 # get leaving list
-                link_list   = LinkM({ "id_from" : other_wiki["id_from"] }).getList(nolimit = True, select = " id_to ")
+                link_list   = self.getLeavingWikiList(other_wiki["id_from"])
                 link_count  = len(link_list)
 
                 # if has no links skip!
@@ -69,7 +83,7 @@ class PageRank:
                 summation_probability = summation_probability + (probability * link_probability)
 
             # get page rank probability
-            page_rank_probability = (epsilon/N) + (1 - epsilon) * summation_probability
+            page_rank_probability = (epsilon / N) + ((1 - epsilon) * summation_probability)
 
             if attempt != 0:
                 # save the total change
@@ -79,7 +93,7 @@ class PageRank:
             self.page_probabilities[ current_wiki['id'] ] = page_rank_probability
 
         if attempt == 0  or total_change > 1e-8:
-            print("total change", total_change, attempt)
+            # print("total change", total_change, attempt)
             self.calculate( (attempt + 1) )
         else:
             # save to database the new probability
