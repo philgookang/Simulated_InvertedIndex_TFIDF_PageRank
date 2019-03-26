@@ -36,3 +36,21 @@ class LinkM:
         if not nolimit and not count:   params.extend((limit, offset))
 
         return self.postman.getList(query, params)
+
+    def getCount(self):
+        query = '''
+            SELECT 
+                COUNT(*) as cnt 
+            FROM (
+                    SELECT 
+                        DISTINCT `id_from` 
+                    FROM 
+                        `link` 
+                    UNION
+                    SELECT 
+                        DISTINCT `id_to` 
+                    FROM 
+                        `link`
+                ) as distinct_link
+        '''
+        return self.postman.get(query)
