@@ -10,9 +10,10 @@ class PageRank:
 
     def getWikies(self):
 
-        offset          = 0  # pagination offset
-        limit           = 1000 # number of items to load per page
-        self.wiki_list  = [] # holds all the wiki pages
+        self.N          = LinkM().getCount()    # total number of pages in the population
+        offset          = 0                     # pagination offset
+        limit           = 1000                  # number of items to load per page
+        self.wiki_list  = []                    # holds all the wiki pages
 
         while True:  # keep running until we have completed loaded
 
@@ -31,7 +32,7 @@ class PageRank:
 
     def calculate(self, attempt = 0):
 
-        N               = len(self.wiki_list)       # total number of pages
+        N               = self.N["cnt"]             # total number of pages
         epsilon         = 0.15                      # jump to any other node with probability E
         total_change    = 0                         # total change in probability
 
