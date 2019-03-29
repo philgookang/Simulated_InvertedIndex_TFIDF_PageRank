@@ -15,14 +15,3 @@ class PageRankM:
                 ( %s, %s )
         '''
         return self.postman.executemany(query, lst)
-
-    def get(self):
-        query = '''
-            SELECT
-                `id`
-            FROM 
-                `page_rank`
-            WHERE
-                `id` = %s
-        '''
-        return self.postman.get(query, [self.id])
