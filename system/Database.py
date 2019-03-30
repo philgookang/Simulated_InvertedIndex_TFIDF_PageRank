@@ -2,6 +2,8 @@ import pymysql.cursors
 import json
 import sys
 import time
+import warnings
+
 
 class Database:
 
@@ -99,36 +101,39 @@ class Database:
 
     def execute(self, sql, params=[], show_sql=False):
 
-        # check if connection time has been too long
-        self.check_connection_time()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
 
-        start = time.time()
+            # check if connection time has been too long
+            self.check_connection_time()
 
-        try:
+            start = time.time()
 
-            # execute sql
-            self.mysqlCursor.execute(sql, tuple(params))
+            try:
 
-        except TypeError as error:
-            print("[MYSQL SQL] ", error, sql, params)
-        except pymysql.err.ProgrammingError as error:
-            code, message = error.args
-            print("[MYSQL SQL] ", code, message)
-        except pymysql.InternalError as error:
-            code, message = error.args
-            print("[MYSQL ERROR] ", code, message)
+                # execute sql
+                self.mysqlCursor.execute(sql, tuple(params))
 
-        if show_sql:
-            print(self.mysqlCursor.statement)
+            except TypeError as error:
+                print("[MYSQL SQL] ", error, sql, params)
+            except pymysql.err.ProgrammingError as error:
+                code, message = error.args
+                print("[MYSQL SQL] ", code, message)
+            except pymysql.InternalError as error:
+                code, message = error.args
+                print("[MYSQL ERROR] ", code, message)
 
-        end = time.time()
+            if show_sql:
+                print(self.mysqlCursor.statement)
 
-        if (end - start) >= 0.5:
-            pass
-            # print( 'SLOW', end - start, sql, params )
+            end = time.time()
 
-        # apply transaction to database
-        self.mysqlConnection.commit()
+            if (end - start) >= 0.5:
+                pass
+                # print( 'SLOW', end - start, sql, params )
+
+            # apply transaction to database
+            self.mysqlConnection.commit()
 
         return self.mysqlCursor
 
